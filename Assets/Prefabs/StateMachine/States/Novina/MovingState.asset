@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14a0ddfc3e122994789d6818d401b103, type: 3}
+  m_Name: MovingState
+  m_EditorClassIdentifier: 
+  actions:
+  - {fileID: 11400000, guid: c8cc05d4417d42c44abd9d51c5a46f15, type: 2}
+  transitions:
+  - decisions:
+    - decision: {fileID: 11400000, guid: 73b0a15dd3c9e58458ac563da6c076af, type: 2}
+      Invert: 0
+    trueState: {fileID: 11400000}
+    falseState: {fileID: 11400000, guid: cc5b2d5ae12c4c447b31788a3f5364bf, type: 2}

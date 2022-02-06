@@ -9,5 +9,5 @@ public abstract class ShootingSystem : MonoBehaviour
 
     public ShootingSystemData shootingData;
 
-    public abstract void Shoot();
+    public abstract void Shoot(int BulletLayer = 7);
 }

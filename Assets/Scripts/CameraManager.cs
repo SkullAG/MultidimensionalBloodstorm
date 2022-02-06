@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,11 +24,28 @@ public class CameraManager : MonoBehaviour
 	Camera _camera;
 	Vector2 cameraSize;
 
+	public Vector2 effectsPosition;
+
+
+	bool cinematicMode = false;
+	float saveGamePlaySize;
+
+	private void OnEnable()
+    {
+		CameraEvents.StartCamerasShake += StartCameraShake;
+	}
+	private void OnDisable()
+	{
+		CameraEvents.StartCamerasShake -= StartCameraShake;
+	}
+
 	private void Start()
 	{
 		_rb = GetComponent<Rigidbody2D>();
 		_camera = GetComponent<Camera>();
 		cameraSize = new Vector2(_camera.orthographicSize * 2 * _camera.aspect, _camera.orthographicSize * 2);
+
+		effectsPosition = Vector2.zero;
 
 		if (BlendWithCursor)
 		{
@@ -43,6 +61,8 @@ public class CameraManager : MonoBehaviour
 
 	private void FixedUpdate()
 	{
+		if (cinematicMode)
+			return;
 
 		if(BlendWithCursor)
 		{
@@ -65,6 +85,33 @@ public class CameraManager : MonoBehaviour
 		}
 
 
-		_rb.MovePosition(Vector3.Lerp(transform.position, DesiredPos + Offset, acceleration * Time.deltaTime));
+		_rb.MovePosition(Vector3.Lerp(transform.position, DesiredPos + Offset + (Vector3)effectsPosition, acceleration * Time.deltaTime));
+
+		effectsPosition = Vector2.zero;
 	}
+
+	public void StartCameraShake(float intensity, float speed, float time)
+	{
+		StartCoroutine(ShakeCoroutine(intensity, speed, time));
+    }
+
+	IEnumerator ShakeCoroutine(float intensity, float speed, float time)
+    {
+		Vector2 dir = Vector2.zero;
+
+		float actualSpeed = 0;
+		for (float actualTime = 0; actualTime < time; actualTime += Time.deltaTime)
+        {
+			if(actualSpeed <= 0)
+            {
+				actualSpeed = speed;
+				dir = new Vector2(UnityEngine.Random.value, UnityEngine.Random.value).normalized;
+            }
+			actualSpeed -= Time.deltaTime;
+
+			effectsPosition += dir;
+
+			yield return new WaitForFixedUpdate();
+        }
+    }
 }

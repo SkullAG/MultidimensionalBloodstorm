@@ -18,7 +18,8 @@ public class Player : EntityControls
 	private InputAction lookAction;
 
 	private ObjectGrab grabManager;
-	private TurnManager turnM;
+
+	bool IsThrowing = false;
 
 	private void Awake()
 	{
@@ -32,6 +33,17 @@ public class Player : EntityControls
 
 		moveAction = _input.actions.FindAction("Move");
 		lookAction = _input.actions.FindAction("Look");
+		if(PlayerPrefs.HasKey("Weapon1"))
+        {
+			GameObject variableForPrefab = Resources.Load(PlayerPrefs.GetString("Weapon1")) as GameObject;
+			weaponManager.SetWeapon(GameObject.Instantiate(variableForPrefab.transform), 0);
+        }
+
+		if (PlayerPrefs.HasKey("Weapon2"))
+		{
+			GameObject variableForPrefab = Resources.Load(PlayerPrefs.GetString("Weapon2")) as GameObject;
+			weaponManager.SetWeapon(GameObject.Instantiate(variableForPrefab.transform), 1);
+		}
 	}
 
 	private bool ShootingRight = false;
@@ -64,18 +76,40 @@ public class Player : EntityControls
 		}
 	}
 
+	public void PrepareToThrow(InputAction.CallbackContext context)
+	{
+		if (context.started)
+		{
+			IsThrowing = true;
+		}
+		else if (context.canceled)
+		{
+			IsThrowing = false;
+		}
+	}
+
 	public void GrabWeapon(InputAction.CallbackContext context)
 	{
 		if (context.action.name == "Grab1")
 		{
-			if (context.started)
+			if(context.started && IsThrowing)
+            {
+				weaponManager.ThrowWeapon(0);
+			}
+
+			if (context.started && grabManager.GrabWeapon())
 			{
 				weaponManager.SetWeapon(grabManager.GrabWeapon(), 0);
 			}
 		}
 		else if (context.action.name == "Grab2")
 		{
-			if (context.started)
+			if (context.started && IsThrowing)
+			{
+				weaponManager.ThrowWeapon(1);
+			}
+
+			if (context.started && grabManager.GrabWeapon())
 			{
 				weaponManager.SetWeapon(grabManager.GrabWeapon(), 1);
 			}
@@ -121,64 +155,31 @@ public class Player : EntityControls
 
 	void FixedUpdate()
 	{
-		Collider2D groundCollider = Physics2D.OverlapCircle(GroundChecker.position, GCRadius, groundMask);
-		isGrounded = groundCollider /*&& groundCollider.ClosestPoint(GroundChecker.position).y - GroundChecker.position.y <= 0*/;
-
-		RaycastHit2D hit = Physics2D.Raycast(GroundChecker.position, new Vector2(_facing, -1), Mathf.Sqrt(Mathf.Pow(GCRadius, 2) + Mathf.Pow(GCRadius, 2)), groundMask);
+		Collider2D groundCollider = checkForGround();
 
 		movement = Utility.RoundV2(moveAction.ReadValue<Vector2>());
 		Vector2 looking = lookAction.ReadValue<Vector2>();
 
-		Vector2 steepNormals;
-		float steepDirection = 0;
-
-		if (groundCollider)
-		{
-			Vector2 point = groundCollider.ClosestPoint(GroundChecker.position);
-			friction = Mathf.Max(groundCollider.friction, airFriction);
-			
-			if (hit)
-            {
-				steepNormals = hit.normal;
-				steepDirection = _facing;
-				Debug.DrawLine(GroundChecker.position, hit.point, Color.yellow);
-			}
-				
-			else
-            {
-				steepNormals = new Vector2(point.x - GroundChecker.position.x, point.y - GroundChecker.position.y).normalized;
-				steepDirection = Utility.ExtractSign(steepNormals.x);
-				Debug.DrawLine(GroundChecker.position, point, Color.yellow);
-			}
-			
-		}
-		else
-		{
-			friction = airFriction;
-			steepNormals = Vector2.up;
-		}
-
+		SteepInfo _steepInfo = GetSteepNormals(groundCollider);
 
 		checkWalls();
 
+		//Special velocity calculations;
+
 		Vector3 vel = _rb.velocity;
 
-		if(steepNormals.x > 0)
-        {
-			steepNormals = new Vector2(steepNormals.x * (1 - SteepForceLoss/100), steepNormals.y);
-		}
-
-		
 		if (movement.x != 0 && (!Utility.SignesAreEqual(movement.x, _rb.velocity.x) || Mathf.Abs(speed) >= Mathf.Abs(_rb.velocity.x)) && !((movement.x < 0 && touchingLeftWall) || (movement.x > 0 && touchingRightWall)))
 		{
-			vel = Vector3.MoveTowards(_rb.velocity, new Vector2(movement.x * speed * Mathf.Abs(steepNormals.y), Utility.MaxAbs(_rb.velocity.y, movement.x * speed * (Mathf.Abs(steepNormals.x) * steepDirection))), friction * acceleration * Time.deltaTime);
+			vel = Vector3.MoveTowards(_rb.velocity, new Vector2(movement.x * speed * Mathf.Abs(_steepInfo.steepNormals.y), Utility.MaxAbs(_rb.velocity.y, movement.x * speed * (Mathf.Abs(_steepInfo.steepNormals.x) * _steepInfo.steepDirection))), friction * acceleration * Time.deltaTime);
 
 			_facing = movement.x;
 		}
 
 		_rb.velocity = vel;
 
-        Vector2 mousePosition = _input.currentControlScheme != "Keyboard&Mouse" ? looking : ((Vector2)Camera.main.ScreenToWorldPoint(looking) - (Vector2)transform.position);
+		//end of velocity calculations;
+
+		Vector2 mousePosition = _input.currentControlScheme != "Keyboard&Mouse" ? looking : ((Vector2)Camera.main.ScreenToWorldPoint(looking) - (Vector2)transform.position);
 		LookingDirectionNormals = mousePosition.normalized;
 
 		turnM.Turn(LookingDirectionNormals.x > 0);

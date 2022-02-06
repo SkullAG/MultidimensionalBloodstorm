@@ -21,6 +21,40 @@ public static class SoundDelegation
 	public static float RealMusicVolume { get; private set; } = 1;
 	public static float RealEffectsVolume { get; private set; } = 1;
 
+	static SoundDelegation()
+    {
+		//Debug.Log("hello");
+		if(PlayerPrefs.HasKey("MasterVolume"))
+        {
+			RawMasterVolume = PlayerPrefs.GetFloat("MasterVolume");
+        }
+		else
+        {
+			PlayerPrefs.SetFloat("MasterVolume", RawMasterVolume);
+		}
+
+		if (PlayerPrefs.HasKey("MusicVolume"))
+		{
+			RawMusicVolume = PlayerPrefs.GetFloat("MusicVolume");
+		}
+		else
+		{
+			PlayerPrefs.SetFloat("MusicVolume", RawMusicVolume);
+		}
+
+		if (PlayerPrefs.HasKey("EffectsVolume"))
+		{
+			RawEffectsVolume = PlayerPrefs.GetFloat("EffectsVolume");
+		}
+		else
+		{
+			PlayerPrefs.SetFloat("EffectsVolume", RawEffectsVolume);
+		}
+
+		RecalculateSound();
+		
+	}
+
 	public static void PlaySoundEffect(AudioClip clip)
 	{
 		OnPlaySoundEffect(clip);
@@ -29,23 +63,22 @@ public static class SoundDelegation
 	public static void ChangeMasterVolume(float volume)
 	{
 		RawMasterVolume = volume;
+		PlayerPrefs.SetFloat("MasterVolume", RawMasterVolume);
 		RecalculateSound();
-		OnMusicVolumeChange(RealMusicVolume);
-		OnEffectsVolumeChange(RealEffectsVolume);
 	}
 
 	public static void ChangeMusicVolume(float volume)
 	{
 		RawMusicVolume = volume;
+		PlayerPrefs.SetFloat("MusicVolume", RawMusicVolume);
 		RecalculateSound();
-		OnMusicVolumeChange(RealMusicVolume);
 	}
 
 	public static void ChangeEffectsVolume(float volume)
 	{
 		RawEffectsVolume = volume;
+		PlayerPrefs.SetFloat("EffectsVolume", RawEffectsVolume);
 		RecalculateSound();
-		OnEffectsVolumeChange(RealEffectsVolume);
 	}
 
 	private static void RecalculateSound()
@@ -53,6 +86,9 @@ public static class SoundDelegation
 		RealMasterVolume = RawMasterVolume * RawMasterVolume;
 		RealMusicVolume = (RawMusicVolume * RawMusicVolume) * RealMasterVolume;
 		RealEffectsVolume = (RawEffectsVolume * RawEffectsVolume) * RealMasterVolume;
+
+		OnMusicVolumeChange(RealMusicVolume);
+		OnEffectsVolumeChange(RealEffectsVolume);
 
 		//Debug.Log(RealMasterVolume + ", " + RealMusicVolume + ", " + RealEffectsVolume);
 	}

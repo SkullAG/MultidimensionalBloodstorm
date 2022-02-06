@@ -26,7 +26,6 @@ public class NovinaFollow : MonoBehaviour
 
 	private bool IsAvoiding;
 
-	[HideInInspector]
 	public bool IsMoving;
 	private bool isGrounded;
 
@@ -35,6 +34,10 @@ public class NovinaFollow : MonoBehaviour
 	public Vector2 PhisicsMovement { get; private set; } = Vector2.zero;
 
 	List<Vector2> ClosePointsList = new List<Vector2>();
+
+	public bool CinematicMode;
+	public Vector2 CinematicPosition;
+	public float CinematicFacing;
 
 	private void Awake()
 	{
@@ -110,44 +113,72 @@ public class NovinaFollow : MonoBehaviour
 
 	private void followObjective()
 	{
-		/////
-		GetClosePoints();
-
-		if (Vector2.Distance(Objective.position, transform.position) > followRadius)
-		{
-			DesiredPos = (Vector2)Objective.position + (Vector2)(transform.position - Objective.position).normalized * followRadius;
-			IsMoving = true;
-		}
-		else
-		{
-			DesiredPos = transform.position;
-			IsMoving = false;
-		}
-
-		Vector2 tempDir = -new Vector2((transform.position.x - DesiredPos.x) * ( Utility.SignesAreEqual((transform.position.x - DesiredPos.x), PhisicsMovement.x) && Mathf.Abs(PhisicsMovement.x) > 0.5 ? 0 /*Mathf.Abs(1 - PhisicsMovement.x / GCRadius)*/ : 1),
-			(transform.position.y - DesiredPos.y) * (Utility.SignesAreEqual((transform.position.y - DesiredPos.y), PhisicsMovement.y) && Mathf.Abs(PhisicsMovement.y) > 0.5 ? 0 /*Mathf.Abs(1 - PhisicsMovement.y / GCRadius)*/ : 1));
-
-		DesiredPos = tempDir + (Vector2)transform.position + (PhisicsMovement * (dodgeAcceleration / acceleration));
-
-		//Debug.Log(PhisicsMovement);
-
-		_rb.MovePosition(Vector2.Lerp(transform.position, DesiredPos, acceleration * (DesiredPos - (Vector2)transform.position).magnitude * Time.deltaTime));
-
-		if(Objective.position.x > transform.position.x)
+		if(!CinematicMode)
         {
-			GetComponent<TurnManager>().Turn(true);
-        }
-		else if (Objective.position.x < transform.position.x)
-		{
-			GetComponent<TurnManager>().Turn(false);
-		}
+			/////
+			GetClosePoints();
 
-		if (Vector2.Distance(Objective.position, transform.position) > maxDistanceToObjective)
-		{
-			_rb.velocity = Vector2.zero;
-			_rb.MovePosition(Objective.position);
+			if (Vector2.Distance(Objective.position, transform.position) > followRadius)
+			{
+				DesiredPos = (Vector2)Objective.position + (Vector2)(transform.position - Objective.position).normalized * followRadius;
+				IsMoving = Vector2.Distance(Objective.position, transform.position) > followRadius+0.2f;
+			}
+			else
+			{
+				DesiredPos = transform.position;
+				IsMoving = false;
+			}
+
+			Vector2 tempDir = -new Vector2((transform.position.x - DesiredPos.x) * ( Utility.SignesAreEqual((transform.position.x - DesiredPos.x), PhisicsMovement.x) && Mathf.Abs(PhisicsMovement.x) > 0.5 ? 0 /*Mathf.Abs(1 - PhisicsMovement.x / GCRadius)*/ : 1),
+				(transform.position.y - DesiredPos.y) * (Utility.SignesAreEqual((transform.position.y - DesiredPos.y), PhisicsMovement.y) && Mathf.Abs(PhisicsMovement.y) > 0.5 ? 0 /*Mathf.Abs(1 - PhisicsMovement.y / GCRadius)*/ : 1));
+
+			DesiredPos = tempDir + (Vector2)transform.position + (PhisicsMovement * (dodgeAcceleration / acceleration));
+
+			//Debug.Log(PhisicsMovement);
+
+			_rb.MovePosition(Vector2.Lerp(transform.position, DesiredPos, acceleration * (DesiredPos - (Vector2)transform.position).magnitude * Time.deltaTime));
+
+			if(Objective.position.x > transform.position.x)
+			{
+				GetComponent<TurnManager>().Turn(true);
+			}
+			else if (Objective.position.x < transform.position.x)
+			{
+				GetComponent<TurnManager>().Turn(false);
+			}
+
+			if (Vector2.Distance(Objective.position, transform.position) > maxDistanceToObjective)
+			{
+				_rb.velocity = Vector2.zero;
+				_rb.MovePosition(Objective.position);
+			}
+			/////
+        }
+        else
+        {
+			_rb.MovePosition(Vector2.Lerp(transform.position, CinematicPosition, acceleration * Time.deltaTime));
+
+			if(Utility.AproximatelyVector2(transform.position, CinematicPosition, 0.1f))
+            {
+				IsMoving = false;
+
+			}
+			else
+            {
+				IsMoving = true;
+			}
+			
+
+			if (CinematicFacing > 0)
+			{
+				GetComponent<TurnManager>().Turn(true);
+			}
+			else if (CinematicFacing < 0)
+			{
+				GetComponent<TurnManager>().Turn(false);
+			}
 		}
-		/////
+		
 	}
 
 	/*private void followObjective()

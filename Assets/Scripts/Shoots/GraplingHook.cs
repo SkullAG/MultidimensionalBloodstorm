@@ -49,7 +49,7 @@ public class GraplingHook : ShootingSystem
 
 	//public 
 
-	public override void Shoot()
+	public override void Shoot(int Layer = 9)
 	{
 		if (!hook)
 		{
@@ -104,6 +104,13 @@ public class GraplingHook : ShootingSystem
 				Destroy(attachedHookJoint);
 			}
 			hookRb.simulated = false;
+
+			foreach(Collider2D col in hook.GetComponents<Collider2D>())
+            {
+				col.enabled = false;
+
+			}
+
 			hook.SetParent(null);
 			if(attatchedBody)
             {
@@ -137,6 +144,12 @@ public class GraplingHook : ShootingSystem
 
 	public void ResetHook()
 	{
+		foreach (Collider2D col in hook.GetComponents<Collider2D>())
+		{
+			col.enabled = true;
+
+		}
+
 		hookRb.simulated = true;
 		//hookRb.bodyType = RigidbodyType2D.Dynamic;
 		hookRb = null;
@@ -213,15 +226,10 @@ public class GraplingHook : ShootingSystem
 
 
 				attatchedBodySavedLayer = attatchedBody.gameObject.layer;
-				if (attatchedBody.GetComponent<Rigidbody2D>())
+				if (attatchedBody.GetComponent<Rigidbody2D>() && attatchedBody.GetComponent<Rigidbody2D>().bodyType == RigidbodyType2D.Dynamic)
 				{
 					attatchedBody.gameObject.layer = layerWhenAttatched;
-				}
 
-
-
-				if (attatchedBody.GetComponent<Rigidbody2D>())
-				{
 					//attatchedBody.
 					attachedHookJoint = attatchedBody.gameObject.AddComponent<DistanceJoint2D>();
 					attachedHookJoint.enableCollision = true;
@@ -301,17 +309,34 @@ public class GraplingHook : ShootingSystem
 		{
 			for(int i = 1; i < ropePoints.Count-2; i++)
 			{
-				calculatedDistance += (ropePoints[i] - ropePoints[i + 1]).magnitude;
+				calculatedDistance += Vector2.Distance(ropePoints[i], ropePoints[i + 1]);
+
+				//Debug.Log(i + " " + ropePoints[i]);
 
 			}
 
 			calculatedDistance = actualRopeDistance - calculatedDistance;
 
+			
+
 			//here goes a right calculation, not as i did =>
 			//hookRopeDistance = calculatedDistance / 2;
 			//launcherRopeDistance = calculatedDistance  /2 + 0.1f;
 
+			if(isHooked)
+            {
+				hookRopeDistance = Vector2.Distance(hook.position, ropePoints[1]);
 
+				//Debug.Log(calculatedDistance + " - " + hookRopeDistance);
+
+				launcherRopeDistance = calculatedDistance - hookRopeDistance + 0.1f;
+			}
+            else
+            {
+				launcherRopeDistance = Vector2.Distance(transform.position, ropePoints[ropePoints.Count - 2]) +  0.1f;
+			
+				hookRopeDistance = calculatedDistance - launcherRopeDistance;
+			}
 		}
 		else
 		{

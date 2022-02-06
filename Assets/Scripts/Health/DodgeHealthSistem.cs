@@ -29,7 +29,10 @@ public class DodgeHealthSistem : HealthSistem
 
     private void Update()
     {
-        if(dodges < MaxDodges)
+		if (actualInmunityTime > 0)
+			actualInmunityTime -= Time.deltaTime;
+
+		if (dodges < MaxDodges)
         {
 			RechargeState += RechargePerSecond * Time.deltaTime;
 
@@ -52,8 +55,13 @@ public class DodgeHealthSistem : HealthSistem
 
     public override void Hurt(int damage, int DodgeCost = 1)
 	{
+		if (actualInmunityTime > 0)
+			return;
+
+		
+		actualInmunityTime = inmunityTime;
 		//Debug.Log("A"+ DodgeCost);
-		if(dodges > 0)
+		if (dodges > 0)
         {
 			int dc = DodgeCost;
 			dc -= dodges;
@@ -62,13 +70,18 @@ public class DodgeHealthSistem : HealthSistem
 			if (dc > 0)
             {
 				damage = damage / (DodgeCost / dc);
-            }
+				SoundDelegation.PlaySoundEffect(HurtSound);
+			}
 			else
             {
 				damage = 0;
 			}
 
 			OnDodge.Invoke(dodges);
+		}
+        else
+        {
+			SoundDelegation.PlaySoundEffect(HurtSound);
 		}
 
 		health -= damage;

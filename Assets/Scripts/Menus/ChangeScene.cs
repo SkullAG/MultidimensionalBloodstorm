@@ -5,11 +5,24 @@ using UnityEngine.SceneManagement;
 
 public class ChangeScene : MonoBehaviour
 {
-    public string sceneName;
+	public string sceneName;
+	public bool SaveInChange;
 
-    public void Change()
-    {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
-    }
+	public Player player;
+
+	public void Change()
+	{
+		Time.timeScale = 1;
+
+		if(SaveInChange)
+		{
+			PlayerPrefs.SetString("Level", sceneName);
+
+			PlayerPrefs.DeleteKey("Weapon1");
+			PlayerPrefs.DeleteKey("Weapon2");
+
+		}
+
+		SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+	}
 }

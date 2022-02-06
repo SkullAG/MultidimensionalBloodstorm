@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using UnityEngine.Events;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class WeaponShoot : ShootingSystem
 {
@@ -31,8 +32,26 @@ public class WeaponShoot : ShootingSystem
 	public AudioClip[] shootSounds;
 	public AudioClip reloadSound;
 
+	public Light2D flashLight;
+	public float flashLightDuration;
 
-	//AudioSource _audioSource;
+	IEnumerator flash()
+    {
+		if(flashLight)
+        {
+			for(int i = 0; i < 2; i++)
+			{
+				if (i == 0) 
+					flashLight.enabled = true;
+				else
+					flashLight.enabled = false;
+				yield return new WaitForSeconds(flashLightDuration);
+			}
+        }
+		
+    }
+
+    //AudioSource _audioSource;
 
     private void Start()
     {
@@ -40,12 +59,15 @@ public class WeaponShoot : ShootingSystem
 		actualReloadTime = 0;
 		actualFireTime = 0;
 
+		if (flashLight)
+			flashLight.enabled = false;
+
 		//if (GetComponent<AudioSource>())
 		//	_audioSource = GetComponent<AudioSource>();
 		//else
 		//	_audioSource = gameObject.AddComponent<AudioSource>();
 	}
-    public override void Shoot()
+    public override void Shoot(int BulletLayer)
 	{
 		if(actualAmmo > 0 && actualFireTime <= 0 && !isReloading)
         {
@@ -61,9 +83,14 @@ public class WeaponShoot : ShootingSystem
 				shot.SetActive(true);
 				shot.GetComponent<Rigidbody2D>().velocity = shot.transform.right * shootingData.fireForce;
 
+				shot.layer = BulletLayer;
+
+				StopCoroutine(flash());
+				StartCoroutine(flash());
+				//CameraEvents.ShakeAllCameras(shakeIntensity, shakespeed, shaketime);
 				//WaitForFixedUpdate
 				//if(shot.GetComponent<HighSpeedProjectile>())
-                //{
+				//{
 				//	shot.GetComponent<HighSpeedProjectile>().calculateHit(position: shootPoint.position, velocity: shot.transform.right * shootingData.fireForce);
 				//}
 

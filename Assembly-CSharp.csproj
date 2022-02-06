@@ -59,7 +59,7 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Prefabs\StateMachine\Action.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\Action.cs" />
     <Compile Include="Assets\Scripts\Shoots\ShootingSystem.cs" />
     <Compile Include="Assets\Scripts\ObjectGrab.cs" />
     <Compile Include="Assets\Scripts\Menus\MenuPause.cs" />
@@ -68,9 +68,9 @@
     <Compile Include="Assets\Scripts\Deaths\SimpleDeath.cs" />
     <Compile Include="Assets\Scripts\CursorManager.cs" />
     <Compile Include="Assets\Scripts\ImageDestruction.cs" />
-    <Compile Include="Assets\Prefabs\StateMachine\Decision.cs" />
-    <Compile Include="Assets\Prefabs\StateMachine\State.cs" />
-    <Compile Include="Assets\Prefabs\StateMachine\Controller.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\Decision.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\State.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\Controller.cs" />
     <Compile Include="Assets\Scripts\Timer.cs" />
     <Compile Include="Assets\Scripts\Deaths\DestructionCollision.cs" />
     <Compile Include="Assets\Scripts\Shoots\ShootingSystemData.cs" />
@@ -78,34 +78,42 @@
     <Compile Include="Assets\Scripts\Attacks\HurtSistem.cs" />
     <Compile Include="Assets\Scripts\Habilityes\HabilitySistem.cs" />
     <Compile Include="Assets\Scripts\Canvas\CustomUI.cs" />
-    <Compile Include="Assets\Prefabs\StateMachine\Decisions\Novina\NovinaMovementDecision.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\Decisions\Novina\NovinaMovementDecision.cs" />
     <Compile Include="Assets\Scripts\Shoots\AutoLaunch.cs" />
     <Compile Include="Assets\Scripts\Health\DodgeHealthSistem.cs" />
     <Compile Include="Assets\Scripts\Menus\SoundManager.cs" />
     <Compile Include="Assets\Scripts\Shoots\GraplingHook.cs" />
-    <Compile Include="Assets\Prefabs\StateMachine\Transition.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\Transition.cs" />
     <Compile Include="Assets\Scripts\Health\HealthSistem.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
-    <Compile Include="Assets\Prefabs\StateMachine\Decisions\GroundedDecision.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\Decisions\GroundedDecision.cs" />
     <Compile Include="Assets\Scripts\Menus\SoundDelegation.cs" />
     <Compile Include="Assets\Scripts\Habilityes\GhostHandHability.cs" />
+    <Compile Include="Assets\Scripts\Menus\WinManager.cs" />
     <Compile Include="Assets\Scripts\Test.cs" />
-    <Compile Include="Assets\Prefabs\StateMachine\Decisions\SpeedDecision.cs" />
+    <Compile Include="Assets\Resources\Prefabs\StateMachine\Decisions\SpeedDecision.cs" />
     <Compile Include="Assets\Scripts\CameraManager.cs" />
     <Compile Include="Assets\Scripts\Shoots\WeaponShoot.cs" />
     <Compile Include="Assets\Scripts\Canvas\DisplaySegments.cs" />
     <Compile Include="Assets\Scripts\Entity\TurnManager.cs" />
     <Compile Include="Assets\Scripts\Entity\EntityControls.cs" />
     <Compile Include="Assets\Scripts\Menus\ChangeScene.cs" />
+    <Compile Include="Assets\Scripts\CameraEvents.cs" />
     <Compile Include="Assets\Scripts\Menus\ResetScene.cs" />
     <Compile Include="Assets\Scripts\Entity\Player.cs" />
+    <Compile Include="Assets\Scripts\Entity\DamageAnimationController.cs" />
     <Compile Include="Assets\Scripts\Menus\ExitManager.cs" />
     <Compile Include="Assets\Scripts\HighSpeedProjectile.cs" />
     <Compile Include="Assets\Scripts\Canvas\DisplayBar.cs" />
     <Compile Include="Assets\Scripts\Entity\NovinaFollow.cs" />
     <Compile Include="Assets\Scripts\Menus\OptionsManager.cs" />
     <Compile Include="Assets\Scripts\Deaths\Explode.cs" />
+    <Compile Include="Assets\Scripts\Entity\Enemy.cs" />
     <Compile Include="Assets\Scripts\Deaths\ExplosionDeath.cs" />
+    <Compile Include="Assets\Scripts\Menus\LoadScene.cs" />
+    <Compile Include="Assets\Scripts\Cinematics\TriggerCinematic.cs" />
+    <Compile Include="Assets\Scripts\Cinematics\Switches.cs" />
+    <Compile Include="Assets\Scripts\Cinematics\GameManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

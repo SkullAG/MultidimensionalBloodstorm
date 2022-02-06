@@ -10,7 +10,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Final
   - Water
   - UI
   - player
@@ -19,12 +19,12 @@ TagManager:
   - granade
   - ignoreWallJump
   - PickUp
-  - 
+  - EnemyBullets
   - hookAttatched
   - Mirror
-  - 
-  - 
-  - 
+  - Enemy
+  - DeadlyToAll
+  - Cinematics
   - 
   - 
   - 
@@ -48,6 +48,12 @@ TagManager:
     locked: 0
   - name: mid
     uniqueID: 2607620401
+    locked: 0
+  - name: UnlitEntity
+    uniqueID: 1206059493
+    locked: 0
+  - name: Entity
+    uniqueID: 1743717941
     locked: 0
   - name: front
     uniqueID: 1213024175

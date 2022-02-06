@@ -10,7 +10,7 @@ public class Explode : MonoBehaviour
 	public GameObject explosion;
 	public int damage = 0;
 	public int dodgeCost = 1;
-	public int destructionStrenght = 1;
+	//public int destructionStrenght = 1;
 
 	public float explosionForce = 20000;
 
@@ -29,6 +29,8 @@ public class Explode : MonoBehaviour
 	public bool exclusiveToHit = false;
 
 	bool isExploding = false;
+
+	public AudioClip soundEffect;
 
     private void Awake()
     {
@@ -68,6 +70,8 @@ public class Explode : MonoBehaviour
 	public void Detonate(Collider2D collider = null)
     {
 		if (isExploding) { return; }
+
+		SoundDelegation.PlaySoundEffect(soundEffect);
 
 		isExploding = true;
 

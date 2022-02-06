@@ -9,7 +9,13 @@ public class HealthSistem : MonoBehaviour
 	public int health = 100;
 	public int MaxHealth = 100;
 
+	public float inmunityTime = 0;
+
+	protected float actualInmunityTime = 0;
+
 	public UnityEvent OnDead;
+
+	public AudioClip HurtSound;
 	//[Serializable]public class OnLife : UnityEvent<int> {}
 
 	public UnityEvent<float> OnLifeChange;
@@ -17,30 +23,45 @@ public class HealthSistem : MonoBehaviour
 
 	private void Start()
 	{
-		Hurt(0);
+		//Hurt(0);
 		//OnLifeChange.se
 		OnMaxLifeChange.Invoke(MaxHealth);
 	}
 
-	public virtual void Hurt(int damage, int DodgeCost = 0)
+    private void FixedUpdate()
+    {
+		if (actualInmunityTime > 0)
+			actualInmunityTime -= Time.deltaTime;
+
+	}
+
+    public virtual void Hurt(int damage, int DodgeCost = 1)
 	{
-		health -= damage;
+		if(actualInmunityTime <= 0)
+        {
+			SoundDelegation.PlaySoundEffect(HurtSound);
 
-		if (health > MaxHealth)
-		{
-			health = MaxHealth;
-		}
-		else if (health < 0)
-		{
-			health = 0;
-		}
+			actualInmunityTime = inmunityTime;
 
-		OnLifeChange.Invoke(health);
+			health -= damage;
+
+			if (health > MaxHealth)
+			{
+				health = MaxHealth;
+			}
+			else if (health < 0)
+			{
+				health = 0;
+			}
+
+			OnLifeChange.Invoke(health);
 
 
-		if (health<=0)
-		{
-			OnDead.Invoke();
-		}
+			if (health<=0)
+			{
+				OnDead.Invoke();
+			}
+        }
+		
 	}
 }

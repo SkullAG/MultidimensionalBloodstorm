@@ -47,7 +47,7 @@ public class ObjectGrab : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No weapon found");
+            //Debug.LogWarning("No weapon found");
             return null;
         }
     }
